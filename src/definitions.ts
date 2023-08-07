@@ -1,62 +1,63 @@
 import { PluginListenerHandle } from '@capacitor/core';
 
-export interface IWebviewOverlayPlugin {
-    /**
-     * Open a webview with the given URL
-     */
-    open(options: OpenOptions): Promise<void>;
+export interface FloatingWebPlugin {
+  /**
+   * Open a webview with the given URL.
+   */
+  open(options: OpenOptions): Promise<void>;
 
-    /**
-     * Close an open webview.
-     */
-    close(): Promise<void>;
+  /**
+   * Close an open webview.
+   */
+  close(): Promise<void>;
 
-    /**
-     * Load a url in the webview.
-     */
-    loadUrl(options: {url: string}): Promise<void>;
+  /**
+   * Load a url in the webview.
+   */
+  loadUrl(options: { url: string }): Promise<void>;
 
-    /**
-     * Get snapshot image
-     */
-    getSnapshot(): Promise<{src: string}>;
+  goBack(): Promise<void>;
 
-    show(): Promise<void>;
-    hide(): Promise<void>;
+  goForward(): Promise<void>;
 
-    toggleFullscreen(): Promise<void>;
-    goBack(): Promise<void>;
-    goForward(): Promise<void>;
-    reload(): Promise<void>;
-    
-    handleNavigationEvent(options: {allow: boolean}): Promise<void>;
+  reload(): Promise<void>;
 
-    updateDimensions(options: Dimensions): Promise<void>;
+  updateDimensions(options: Dimensions): Promise<void>;
 
-    evaluateJavaScript(options: {javascript: string}): Promise<{result: string}>;
+  addListener(
+    eventName: EventName,
+    listener: PageloadListener | ProgressListener | NavigateListener,
+  ): PluginListenerHandle;
 
-    addListener(eventName: 'pageLoaded' | 'updateSnapshot' | 'progress' | 'navigationHandler', listenerFunc: (...args: any[]) => void): PluginListenerHandle;
+  removeAllListeners(): Promise<void>;
 }
 
-interface OpenOptions extends Dimensions {
-    /**
-     * The URL to open the webview to
-     */
-    url: string;
+type PageloadListener = () => void;
 
-    javascript?: string;
-    injectionTime?: ScriptInjectionTime;
-    userAgent?: string;
+type ProgressListener = (event: { value: number }) => void;
+
+type NavigateListener = (event: {
+  url: string;
+  newWindow: boolean;
+  sameHost: boolean;
+}) => void;
+
+export type EventListenerMap = {
+  pageLoad: PageloadListener;
+  progress: ProgressListener;
+  navigate: NavigateListener;
+};
+
+export type EventName = keyof EventListenerMap;
+
+export interface OpenOptions extends Dimensions {
+  url: string;
+  userAgent?: string;
 }
 
-interface Dimensions {
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-}
-
-export enum ScriptInjectionTime {
-    atDocumentStart,
-    atDocumentEnd
+export interface Dimensions {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
 }
