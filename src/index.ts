@@ -1,31 +1,34 @@
-import { PluginListenerHandle, registerPlugin } from '@capacitor/core';
+import type { PluginListenerHandle } from '@capacitor/core';
+import { registerPlugin } from '@capacitor/core';
 import ResizeObserver from 'resize-observer-polyfill';
-import {
+
+import type {
   Dimensions,
   EventListenerMap,
   EventName,
-  FloatingWebPlugin,
+  FloatingWebPlugin as IFloatingWebPlugin,
   OpenOptions,
 } from './definitions';
 
-const FloatingWebCore = registerPlugin<FloatingWebPlugin>('FloatingWeb', {
-  // web: () => import('./web').then(m => new m.FloatingWebWeb()),
+const FloatingWebCore = registerPlugin<IFloatingWebPlugin>('FloatingWeb', {
+  web: () => import('./web').then(m => new m.FloatingWebWeb()),
 });
 
-class FloatingWebHelper implements FloatingWebPlugin {
+class FloatingWebPlugin implements IFloatingWebPlugin {
   element: HTMLElement | undefined;
   resizeObserver: ResizeObserver | undefined;
 
-  open(options: OpenOptions & { element: HTMLElement }): Promise<void> {
+  open(options: OpenOptions): Promise<void> {
     if (!options.element) {
       throw new Error('No element provided');
     }
 
     this.element = options.element;
     this.resizeObserver = new ResizeObserver(entries => {
-      for (const _entry of entries) {
+      for (const _ of entries) {
         const boundingBox = options.element.getBoundingClientRect();
         this.updateDimensions({
+          scale: options.scale,
           width: Math.round(boundingBox.width),
           height: Math.round(boundingBox.height),
           x: Math.round(boundingBox.x),
@@ -47,7 +50,7 @@ class FloatingWebHelper implements FloatingWebPlugin {
 
   close(): Promise<void> {
     this.element = undefined;
-    this.resizeObserver && this.resizeObserver.disconnect();
+    this.resizeObserver?.disconnect();
     FloatingWebCore.removeAllListeners();
     return FloatingWebCore.close();
   }
@@ -68,6 +71,14 @@ class FloatingWebHelper implements FloatingWebPlugin {
     return FloatingWebCore.reload();
   }
 
+  show(): Promise<void> {
+    return FloatingWebCore.show();
+  }
+
+  hide(): Promise<void> {
+    return FloatingWebCore.hide();
+  }
+
   updateDimensions(options: Dimensions): Promise<void> {
     return FloatingWebCore.updateDimensions(options);
   }
@@ -85,4 +96,4 @@ class FloatingWebHelper implements FloatingWebPlugin {
 }
 
 export * from './definitions';
-export const FloatingWeb = FloatingWebHelper;
+export const FloatingWeb = new FloatingWebPlugin();

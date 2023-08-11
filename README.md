@@ -19,6 +19,8 @@ npx cap sync
 * [`goBack()`](#goback)
 * [`goForward()`](#goforward)
 * [`reload()`](#reload)
+* [`show()`](#show)
+* [`hide()`](#hide)
 * [`updateDimensions(...)`](#updatedimensions)
 * [`addListener(keyof EventListenerMap, ...)`](#addlistenerkeyof-eventlistenermap)
 * [`removeAllListeners()`](#removealllisteners)
@@ -98,6 +100,24 @@ reload() => Promise<void>
 --------------------
 
 
+### show()
+
+```typescript
+show() => Promise<void>
+```
+
+--------------------
+
+
+### hide()
+
+```typescript
+hide() => Promise<void>
+```
+
+--------------------
+
+
 ### updateDimensions(...)
 
 ```typescript
@@ -141,10 +161,12 @@ removeAllListeners() => Promise<void>
 
 #### OpenOptions
 
-| Prop            | Type                |
-| --------------- | ------------------- |
-| **`url`**       | <code>string</code> |
-| **`userAgent`** | <code>string</code> |
+| Prop               | Type                     |
+| ------------------ | ------------------------ |
+| **`url`**          | <code>string</code>      |
+| **`element`**      | <code>HTMLElement</code> |
+| **`userAgent`**    | <code>string</code>      |
+| **`wideViewport`** | <code>boolean</code>     |
 
 
 #### Dimensions
@@ -155,6 +177,7 @@ removeAllListeners() => Promise<void>
 | **`height`** | <code>number</code> |
 | **`x`**      | <code>number</code> |
 | **`y`**      | <code>number</code> |
+| **`scale`**  | <code>number</code> |
 
 
 #### PluginListenerHandle

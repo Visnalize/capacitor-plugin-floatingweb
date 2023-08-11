@@ -1,4 +1,6 @@
-import { PluginListenerHandle } from '@capacitor/core';
+/// <reference types="@capacitor/cli" />
+
+import type { PluginListenerHandle } from '@capacitor/core';
 
 export interface FloatingWebPlugin {
   /**
@@ -21,6 +23,10 @@ export interface FloatingWebPlugin {
   goForward(): Promise<void>;
 
   reload(): Promise<void>;
+
+  show(): Promise<void>;
+
+  hide(): Promise<void>;
 
   updateDimensions(options: Dimensions): Promise<void>;
 
@@ -52,7 +58,9 @@ export type EventName = keyof EventListenerMap;
 
 export interface OpenOptions extends Dimensions {
   url: string;
+  element: HTMLElement;
   userAgent?: string;
+  wideViewport?: boolean;
 }
 
 export interface Dimensions {
@@ -60,4 +68,14 @@ export interface Dimensions {
   height: number;
   x: number;
   y: number;
+  scale?: number;
+}
+
+declare module '@capacitor/cli' {
+  export interface PluginsConfig {
+    FloatingWeb: {
+      userAgent: string;
+      scale: number;
+    };
+  }
 }
